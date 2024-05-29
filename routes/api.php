@@ -17,6 +17,8 @@ use Illuminate\Support\Facades\Route;
 Route::post('/auth/register', [App\Http\Controllers\Api\AuthController::class, 'createUser']);
 Route::post('/auth/login', [App\Http\Controllers\Api\AuthController::class, 'loginUser']);
 
+Route::middleware('auth:sanctum')->post('/logout', [App\Http\Controllers\Api\AuthController::class, 'logout']);
+
 Route::middleware('auth:sanctum')->group(function () {
     //here you can add all your api routes
 });
