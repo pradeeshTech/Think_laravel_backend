@@ -13,6 +13,15 @@ use Illuminate\Support\Facades\Route;
 |
 */
 
+
+
 Route::get('/', function () {
     return view('welcome');
+});
+
+// Route::get('/csrf-token', function () {
+//     return response()->json(['csrfToken' => csrf_token()]);
+// });
+Route::get('/csrf-token', function () {
+    return response()->json(['csrfToken' => csrf_token()]);
 });

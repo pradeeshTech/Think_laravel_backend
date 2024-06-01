@@ -22,3 +22,11 @@ Route::middleware('auth:sanctum')->post('/logout', [App\Http\Controllers\Api\Aut
 Route::middleware('auth:sanctum')->group(function () {
     //here you can add all your api routes
 });
+
+// Route::middleware('cors')->group(function () {
+//     Route::get('/csrf-token', function () {
+//         return response()->json(['csrfToken' => csrf_token()]);
+//     });
+//     Route::post('/auth/login', [AuthController::class, 'login']);
+//     Route::post('/auth/register', [AuthController::class, 'register']);
+// });
