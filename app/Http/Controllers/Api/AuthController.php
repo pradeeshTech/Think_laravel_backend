@@ -82,22 +82,24 @@ class AuthController extends Controller
 
             if (!Auth::attempt($request->only(['email', 'password']))) {
                 return response()->json([
-                    'status' => false,
+                    'status' => 'failure',
                     'message' => 'Email & Password does not match with our record.',
-                ], 401);
+                    'token' => "",
+                ], 200);
             }
 
             $user = User::where('email', $request->email)->first();
 
             return response()->json([
-                'status' => true,
+                'status' => 'Success',
                 'message' => 'User Logged In Successfully',
                 'token' => $user->createToken("API TOKEN")->plainTextToken
             ], 200);
         } catch (\Throwable $th) {
             return response()->json([
-                'status' => false,
-                'message' => $th->getMessage()
+                'status' => 'failure',
+                'message' => $th->getMessage(),
+                'token' => ""
             ], 500);
         }
     }
