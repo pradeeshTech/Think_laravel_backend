@@ -8,6 +8,7 @@ use Illuminate\Http\Request;
 use Illuminate\Support\Facades\Auth;
 use Illuminate\Support\Facades\Hash;
 use Illuminate\Support\Facades\Validator;
+use Firebase\JWT\JWT;
 
 class AuthController extends Controller
 {
@@ -19,6 +20,7 @@ class AuthController extends Controller
     public function createUser(Request $request)
     {
         try {
+
             //Validated
             $validateUser = Validator::make(
                 $request->all(),
@@ -90,11 +92,22 @@ class AuthController extends Controller
 
             $user = User::where('email', $request->email)->first();
 
+             if(empty($user)) {
+                return response()->json([
+                    'status' => "failure",
+                    'message' => "You are not authorized to access the mobile. Please contact your Administrator"
+                ], 400);
+            }
+
+            $access_token = $this->generateToken($user);
             return response()->json([
-                'status' => 'Success',
+                'status' => "success",
                 'message' => 'User Logged In Successfully',
-                'token' => $user->createToken("API TOKEN")->plainTextToken
+                'token' => $user->createToken("API TOKEN")->plainTextToken,
+                'access_token' => $access_token
             ], 200);
+
+
         } catch (\Throwable $th) {
             return response()->json([
                 'status' => 'failure',
@@ -102,6 +115,25 @@ class AuthController extends Controller
                 'token' => ""
             ], 500);
         }
+    }
+
+    protected function generateToken($user)
+    {
+
+        $payload = [
+            'user_id' => $user->id,
+            'user_name' => $user->name,
+            // 'user_role' => $user->org_role,
+            // 'client_id' => $user->client_id,
+            // 'is_onboarded' => $user->is_onboarded,
+            'active' => $user->active,
+            'exp' => time() + 3600 * 3, //# Hours
+        ];
+
+        $secret_token = env('APP_KEY');
+        // dd($secret_token);
+
+        return JWT::encode($payload, $secret_token, 'HS256');
     }
 
     public function logout(Request $request)
